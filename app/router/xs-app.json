@@ -1,0 +1,35 @@
+{
+  "welcomeFile": "/ui5display/index.html",
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "^/ui5display/(.*)$",
+      "localDir": "resources",
+      "target": "ui5display/$1",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Viewer",
+        "$XSAPPNAME.Admin"
+      ]
+    },
+    {
+      "source": "^/ui5admin/(.*)$",
+      "localDir": "resources",
+      "target": "ui5admin/$1",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Admin"
+      ]
+    },
+    {
+      "source": "^/srv/(.*)$",
+      "target": "/$1",
+      "destination": "srv-api",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Viewer",
+        "$XSAPPNAME.Admin"
+      ]
+    }
+  ]
+}

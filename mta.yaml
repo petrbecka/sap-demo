@@ -1,0 +1,123 @@
+_schema-version: 3.3.0
+ID: cap-demo
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: cap-demo-srv
+  type: nodejs
+  path: .
+  requires:
+  - name: cap-demo-auth
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    instances: 1
+  build-parameters:
+    builder: npm-ci
+- name: cap-demo-approuter
+  type: approuter.nodejs
+  path: app/router
+  requires:
+  - name: cap-demo-auth
+  - name: srv-api
+    group: destinations
+    properties:
+      forwardAuthToken: true
+      name: srv-api
+      url: ~{srv-url}
+  - name: cap-demo-destination-service
+    group: destinations
+    properties:
+      forwardAuthToken: false
+      name: ui5
+      url: https://ui5.sap.com
+  parameters:
+    disk-quota: 256M
+    keep-existing-routes: true
+    memory: 256M
+  build-parameters:
+    builder: npm-ci
+- name: cap-demo-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: cap-demo-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - ui5display.zip
+      name: ui5display
+      target-path: resources/
+    - artifacts:
+      - ui5admin.zip
+      name: ui5admin
+      target-path: resources/
+- name: ui5display
+  type: html5
+  path: app/ui5display
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: ui5admin
+  type: html5
+  path: app/ui5admin
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: cap-demo-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: cap-demo-xsuaa
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: cap-demo-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: cap-demo-html5-service
+    service-plan: app-host
+- name: cap-demo-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: false
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: cap-demo-destination-service
+    service-plan: lite
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds deploy --to sqlite:db/demo.db

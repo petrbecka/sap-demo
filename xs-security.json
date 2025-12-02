@@ -1,0 +1,27 @@
+{
+  "xsappname": "cap-demo-xsuaa",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Admin access"
+    },
+    {
+      "name": "$XSAPPNAME.Viewer",
+      "description": "Viewer access"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Admin",
+      "description": "Admin role",
+      "scope-references": ["$XSAPPNAME.Admin"]
+    },
+    {
+      "name": "Viewer",
+      "description": "Viewer role",
+      "scope-references": ["$XSAPPNAME.Viewer"]
+    }
+  ],
+  "attributes": []
+}

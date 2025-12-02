@@ -1,0 +1,47 @@
+{
+  "name": "cap-demo",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@cap-js-community/odata-v2-adapter": "^1.15.7",
+    "@cap-js/sqlite": "^2.1.0",
+    "@sap/cds": "^9",
+    "@sap/cds-dk": "^9",
+    "@sap/xssec": "^4",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@sap/cds-dk": "^9",
+    "cds-plugin-ui5": "^0.13.0",
+    "mbt": "^1.2.29",
+    "rimraf": "^5.0.5"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-ui5display": "cds watch --open ui5display/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "undeploy": "cf undeploy cap-demo --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-ui5admin": "cds watch --open ui5admin/index.html?sap-ui-xx-viewCache=false --livereload false"
+  },
+  "private": true,
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "url": "db/demo.db"
+        }
+      },
+      "[production]": {
+        "auth": "xsuaa"
+      }
+    }
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/ui5admin"
+  ]
+}

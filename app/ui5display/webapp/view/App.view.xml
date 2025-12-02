@@ -1,0 +1,41 @@
+<mvc:View controllerName="ui5display.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <App id="app" busy="false" busyIndicatorDelay="0">
+    <Page id="page" title="{i18n>title}">
+        <content>
+            <VBox height="100%" width="100%">
+                <Table
+                    id="booksTable"
+                    items="{
+                        path: 'dataModel>/'
+                    }">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                        <Title text="Books with discount (from CAP event handler)" />
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column><Text text="ID" /></Column>
+                        <Column><Text text="Title" /></Column>
+                        <Column><Text text="Price" /></Column>
+                        <Column><Text text="Currency" /></Column>
+                        <Column><Text text="Discount" /></Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                        <cells>
+                            <Text text="{dataModel>ID}" />
+                            <Text text="{dataModel>title}" />
+                            <Text text="{dataModel>price}" />
+                            <Text text="{dataModel>currency}" />
+                            <Text text="{dataModel>discount}" />
+                        </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+    </Page>
+    </App>
+</mvc:View>
